@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tns:RequestValidadorConexiones xsi:schemaLocation="http://akk.com/ReceptorValidadorConexiones validadorConexiones.xsd" xmlns:tns="http://akk.com/ReceptorValidadorConexiones" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<tns:emailUsuario>aaaguirrer@hotmail.com</tns:emailUsuario>
+	<tns:idHotel>1</tns:idHotel>
+	<tns:fechaReservacion>1997-01-15</tns:fechaReservacion>
+</tns:RequestValidadorConexiones>
+
+<rec:RequestRealizarPagos xmlns:rec="http://karla.com/ReceptorRealizarPagos">
+	<rec:idReservacion>11</rec:idReservacion>
+	<rec:emailUsuario>aaaguirrer@hotmail.com</rec:emailUsuario>
+	<rec:costo>0.0</rec:costo>
+	<rec:codigoRespuesta>0</rec:codigoRespuesta>
+</rec:RequestRealizarPagos>

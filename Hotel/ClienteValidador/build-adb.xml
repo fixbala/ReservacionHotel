@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ClienteValidador" default="package-server" basedir=".">
+    <property file="build-adb.properties"/>
+    <property name="resources" value="./src/main/resources"/>
+    <property name="wsdl-uri" value="${resources}/${wsdl.name}.wsdl"/>
+    <property name="tomcat-deployment" value="${tomcat.home}\webapps"/>
+    <property name="axis2-deployment" value="${tomcat-deployment}\axis2\WEB-INF\services"/>
+    <property name="build" value="./build"/>
+    <property name="build.classes" value="${build}/classes"/>
+    <property name="build.lib" value="${build}/lib"/>
+    <property name="lib" value="./lib"/>
+    <property name="server.resources" value="${server.path}/resources"/>
+    <property name="client.resources" value="${client.path}/resources"/>
+    <property name="xmlbeans.packaged.jar.name" value="xmlbeans-packaged"/>
+    <property name="web.service.skeleton" value="${lib}/${wsdl.name}-skeleton-${web.service.version}.jar"/>
+
+    <path id="axis2.class.path">
+        <fileset dir="${axis2.home}/lib" includes="**/*.jar"/>
+    </path>
+    <target name="init" depends="clean-build">
+        <mkdir dir="${build}"/>
+        <mkdir dir="${build.classes}"/>
+        <mkdir dir="${build.lib}"/>
+    </target>
+    <target name="clean-all" depends="clean-build, clean-server, clean-client"/>
+    <target name="clean-build">
+        <echo message="Eliminando archivos de empaquetamiento"/>
+        <delete quiet="true" dir="${build}"/>
+        <delete quiet="true" dir="${build.classes}"/>
+        <delete quiet="true" dir="${build.lib}"/>
+    </target>
+    <target name="clean-server">
+        <echo message="Eliminando archivos del servidor"/>
+        <delete quiet="true" dir="${server.path}"/>
+    </target>
+    <target name="clean-client">
+        <echo message="Eliminando archivos del cliente"/>
+        <delete quiet="true" dir="${client.path}"/>
+    </target>
+    <!-- Generate server linkage code from WSDL-->
+    <target name="generate-server" depends="clean-server">
+        <echo message="Eliminando archivos java, class y aar."/>
+        <delete dir="${server.path}"/>
+        <echo message="Ejecutando WSDL2Java."/>
+        <mkdir dir="${server.path}"/>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" classpathref="axis2.class.path" fork="true">
+            <!-- Specify a custom package name for the generated code -->
+            <!-- -R Resources destination -->
+            <!--arg value="-R"/>
+            <arg value="src/main/resources"/-->
+            <!-- -p pakage -->
+            <arg value="-p"/>
+            <arg value="${web.service.package}"/>
+            <!-- -o Source destination -->
+            <arg value="-o"/>
+            <arg value="${server.path}"/>
+            <!-- Valid databinding: xmlbeans, adb (axis2 databinding) -->
+            <arg value="-d"/>
+            <arg value="adb"/>
+            <!-- Generate sync style code -->
+            <arg value="-s"/>
+            <!-- -ss parameter generates server side code (i.e. skeletons) (Default: off). -->
+            <arg value="-ss"/>
+            <!-- -sd parameter says generates server deployment files , i.e services.xml -->
+            <arg value="-sd"/>
+            <!-- Unpacks de databinding classes -->
+            <!--arg value="-u"-->
+            <!-- -uw parameter unwraps the request messages -->
+            <!--arg value="-uw"-->
+            <!-- url o path -->
+            <arg value="-uri"/>
+            <arg value="${wsdl-uri}"/>
+        </java>
+        <!-- Decomment next lines if you want to replace implementation class in deployment descriptor -->
+        <!--copy file="${server.path}/resources/services.xml" todir="src/main/resources"/-->
+        <!--replace file="src/main/resources/services.xml" token="Skeleton" value="Impl"/-->
+    </target>
+    <target name="compile-server" depends="init, generate-server">
+    	<echo message="Copiando infraestructura xmlbeans al build del servidor."/>
+		<copy toDir="${build.classes}">
+			<fileset dir="${server.resources}"/>
+		</copy>
+    	<echo message="Compilando clases del servidor."/>
+        <javac fork="true" destdir="${build.classes}" srcdir="${server.path}/src">
+            <classpath refid="axis2.class.path"/>
+        </javac>
+    </target>
+    <target name="generate-client" depends="clean-client">
+        <echo message="Running WSDL2Java task"/>
+        <mkdir dir="${client.path}"/>
+        <java classpathref="axis2.class.path" fork="true" classname="org.apache.axis2.wsdl.WSDL2Java">
+            <!-- -o parameter sets the output root directory -->
+            <arg value="-o"/>
+            <arg value="${client.path}"/>
+            <!-- -p parameter gives the package for Axis2 code generation -->
+            <arg value="-p"/>
+            <arg value="${web.service.package}"/>
+            <!-- -d parameter selects the databinding framework -->
+            <arg value="-d"/>
+            <arg value="adb"/>
+            <!-- -u parameter unbundles data object classes -->
+            <!--arg value="-u"/-->
+            <!-- -uw parameter unwraps the request messages -->
+            <!--arg value="-uw"/-->
+            <!-- -s generates synchronous methods only -->
+            <arg value="-s"/>
+            <!-- -uri parameter provides the WSDL input -->
+            <arg value="-uri"/>
+            <arg value="${wsdl-uri}"/>
+        </java>
+    	
+    </target>
+    <!-- Package server code as .aar file -->
+    <target name="package-server" depends="init">
+        <echo message="Empaquetando servicio web"/>
+        <!-- Se incluyen las clases compiladas por eclipse y los recursos como services.xml -->
+        <copy toDir="${build.classes}">
+            <fileset dir="bin">
+            	<!-- Se excluyen por services.xml que se tiene en resources -->
+                <exclude name="wsdl/"/>
+                <exclude name="*.wsdl"/>
+                <exclude name="*.xsd"/>
+            </fileset>
+        </copy>
+
+        <echo message="Se copian esquemas y wsdl."/>
+    	<!-- Se copian wsdl, esquemas y services.xml. -->
+        <copy toDir="${build.classes}/META-INF" failonerror="false">
+            <fileset dir="${resources}">
+                <include name="*.xml"/>
+                <include name="*.wsdl"/>
+                <include name="*.xsd"/>
+            </fileset>
+        </copy>
+
+        <echo message="Generando archivo aar."/>
+    	<!-- Se genera el archivo aar con lo que se copió temporalmente en build. -->
+        <jar destfile="${build.lib}/${wsdl.name}-${web.service.version}.aar">
+            <!-- Se incluye el contenido del classpath -->
+            <fileset excludes="**/Test.class" dir="${build.classes}"/>
+
+        	<manifest>
+                <attribute name="Funcionalidad" value="Servidor web service"/>
+            </manifest>
+        </jar>    	
+    </target>
+	<target name="deploy" depends="package-server">
+        <echo message="Copiando archivo aar al directorio ${axis2-deployment}"/>
+        <copy todir="${axis2-deployment}" file="${build.lib}/${wsdl.name}-${web.service.version}.aar"/>
+    </target>
+    <!-- Package client code as .jar file -->
+    <target name="package-client" depends="init">
+        <echo message="Empaquetando cliente de servicio web"/>
+        <copy toDir="${build.classes}">
+            <fileset dir="bin"/>
+        </copy>
+        <copy toDir="${build.classes}/META-INF" failonerror="false">
+            <fileset dir="${client.resources}">
+                <include name="*.xml"/>
+                <include name="*.wsdl"/>
+                <include name="*.xsd"/>
+            </fileset>
+        </copy>
+        <jar destfile="${build.lib}/${wsdl.name}.jar">
+            <fileset excludes="**/Test.class" dir="${build.classes}"/>
+            <manifest>
+                <attribute name="Funcionalidad" value="Cliente web service"/>
+            </manifest>
+        </jar>    	
+    </target>
+</project>

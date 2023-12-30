@@ -1,0 +1,41 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+def AXIS2_VERSION = '1.6.2'
+
+dependencies {
+    compile  "org.apache.axis2:axis2-adb:${AXIS2_VERSION}",
+            "org.apache.axis2:axis2-spring:${AXIS2_VERSION}",
+            "org.apache.axis2:axis2-kernel:${AXIS2_VERSION}",
+            "org.apache.axis2:axis2-transport-local:${AXIS2_VERSION}",
+            "org.apache.axis2:axis2-transport-http:${AXIS2_VERSION}",
+			"org.springframework:spring-jdbc:3.0.0.RELEASE"
+            
+
+    providedCompile group: 'jboss', name: 'jboss-j2ee' , version:'4.2.2.GA',
+    "log4j:log4j:1.2.14"
+
+	testCompile "junit:junit:4.12"
+}
+
+// Tarea para copiar temporalmente a una carperta lib las dependencias.
+task copyCompileLibs(type: Copy) {
+    into "libAxis2"
+    from configurations.compile
+}
+
+
+
+
+
+
+
+
+
+

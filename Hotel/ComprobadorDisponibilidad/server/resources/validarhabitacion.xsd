@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://itq.edu/soa/validarhab" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://itq.edu/soa/validarhab">
+    <xs:element name="RequestValidar">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="idReservacion" type="xs:string"/>
+                <xs:element name="idHotel" type="xs:string"/>
+                <xs:element name="fechaReservacion" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ResponseValidar">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="codigoRespuesta" type="xs:int"/>
+                <xs:element name="idReservacion" type="xs:string"/>
+                <xs:element minOccurs="0" name="idHabitacion" type="xs:string"/>
+                <xs:element minOccurs="0" name="costo" type="xs:double"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

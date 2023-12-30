@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  
+    xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:jms="http://www.springframework.org/schema/jms"  
+    xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:jee="http://www.springframework.org/schema/jee"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans   
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+    http://www.springframework.org/schema/jms  
+    http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+    http://www.springframework.org/schema/jee 
+    http://www.springframework.org/schema/jee/spring-jee-3.0.xsd">  
+	<!-- *********************************** DataSources *********************************** -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost/hotel" />
+		<property name="username" value="root" />
+		<property name="password" value="itq2012" />
+	</bean>
+	<!--  jee:jndi-lookup id="dataSource" expected-type="javax.sql.DataSource" jndi-name="jdbc/usuarios"/-->
+	<!-- resource-ref>
+    <res-ref-name>jdbc/testDb</res-ref-name>
+    	<res-type>javax.sql.DataSource</res-type>
+    	<res-auth>Container</res-auth>
+    	<res-sharing-scope>Shareable</res-sharing-scope>
+	</resource-ref -->
+	<!-- *********************************** Spring Templates *********************************** -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- *********************************** JDBC objects *********************************** -->
+	<bean id="usuarioDao" class="com.springsample.dao.UsuarioDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+	</bean>
+	<!-- *********************************** Transaction manager *********************************** -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="validarHabitacionServiceImpl"
+		class="com.akk.validarhabitacion.ValidarHabitacionServiceImpl">
+		<property name="usuarioDao" ref="usuarioDao" />
+	</bean>
+	<bean id="applicationContext"
+		class="org.apache.axis2.extensions.spring.receivers.ApplicationContextHolder" />
+	
+</beans>

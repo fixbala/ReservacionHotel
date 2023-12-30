@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="http://itq.edu/soa/validarhab" targetNamespace="http://itq.edu/soa/validarhab">
+	<wsdl:types>
+		<xs:schema targetNamespace="http://itq.edu/soa/validarhab" elementFormDefault="qualified">
+			<xs:include schemaLocation="validarhabitacion.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="ValidarHabitacionMessageRequest">
+		<wsdl:part name="parameter" element="tns:RequestValidar"/>
+	</wsdl:message>
+	<wsdl:message name="ValidarHabitacionMessageResponse">
+		<wsdl:part name="parameter" element="tns:ResponseValidar"/>
+	</wsdl:message>
+	<wsdl:portType name="ValidarHabitacionPortType">
+		<wsdl:operation name="ValidarHabitacionOperation">
+			<wsdl:input message="tns:ValidarHabitacionMessageRequest"/>
+			<wsdl:output message="tns:ValidarHabitacionMessageResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="ValidarHabitacionBinding" type="tns:ValidarHabitacionPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="ValidarHabitacionOperation">
+			<soap:operation soapAction="http://itq.edu/soa/validarhab/verificar"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ValidarHabitacionService">
+		<wsdl:port name="ValidarHabitacionPort" binding="tns:ValidarHabitacionBinding">
+			<soap:address location="http://localhost:8082/axis2/services/validarhabitacionService"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

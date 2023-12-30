@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://akk.com/ValidadorConexiones" targetNamespace="http://akk.com/ValidadorConexiones" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="RequestValidadorConexiones">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="emailUsuario" type="xs:string" />
+				<xs:element name="idHotel" type="xs:string" />
+				<xs:element name="fechaReservacion" type="xs:string" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ResponseValidadorConexiones">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="codigoRespuesta" type="xs:int" />
+				<xs:element name="idReservacion" type="xs:string" minOccurs="0" />
+				<xs:element name="idHabitacion" type="xs:string" minOccurs="0" />
+				<xs:element name="costo" type="xs:double" minOccurs="0" />
+				<xs:element name="factura" type="xs:string" minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

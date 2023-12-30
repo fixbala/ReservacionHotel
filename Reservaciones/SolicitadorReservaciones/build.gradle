@@ -1,0 +1,71 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+def COMPONENT_VERSION = '1.0.0'
+def CONF_FOLDER = 'env/dev'
+def SPRING_VERSION="5.1.5.RELEASE"
+def AXIS2_VERSION = '1.6.2'
+def JBOSS_HOME="/opt/jboss-4.2.3.GA"
+
+dependencies {
+    compile "org.springframework:spring-jms:${SPRING_VERSION}",
+            "org.springframework:spring-context-support:${SPRING_VERSION}",
+			"org.springframework:spring-web:${SPRING_VERSION}",
+			"org.springframework:spring-jdbc:${SPRING_VERSION}",
+			"org.apache.xmlbeans:xmlbeans:3.1.0",
+			"org.apache.axis2:axis2-spring:${AXIS2_VERSION}",
+            "org.apache.axis2:axis2-kernel:${AXIS2_VERSION}",
+            "org.apache.axis2:axis2-transport-local:${AXIS2_VERSION}",
+            "org.apache.axis2:axis2-transport-http:${AXIS2_VERSION}",
+            "org.apache.axis2:axis2-xmlbeans:${AXIS2_VERSION}",
+			"mysql:mysql-connector-java:6.0.6",
+			files("lib/validarhabitacion.jar"),
+			files("lib/pagos.jar"),
+			files("lib/generar.jar"),
+			files("lib/validadorConexiones-1.0.0.jar");
+            
+    providedCompile group: 'jboss', name: 'jboss-j2ee' , version:'4.2.2.GA',
+    "log4j:log4j:1.2.14"
+    testCompile 'junit:junit:4.12'
+}
+
+war {
+	archiveName "SolicitadorReservaciones-${COMPONENT_VERSION}.war"
+	from("${CONF_FOLDER}") {
+		into "WEB-INF/classes"
+	}
+	webInf {
+		from("${CONF_FOLDER}") {
+			include "*.xml"
+		}
+	}
+}
+
+compileJava.dependsOn {
+	[clean]
+}
+
+// Tarea para copiar temporalmente a una carperta lib las dependencias.
+task copyCompileLibs(type: Copy) {
+    into "libAxis2"
+    from configurations.compile
+}
+
+task deploy(type: Copy, dependsOn: war) {
+	into "${JBOSS_HOME}/server/default/deploy"
+	from "build/libs"
+}
+
+
+
+
+
+
+
+

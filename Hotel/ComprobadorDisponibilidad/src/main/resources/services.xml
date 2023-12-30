@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file was auto-generated from WSDL -->
+<!-- by the Apache Axis2 version: 1.6.2  Built on : Apr 17, 2012 (05:33:49 IST) -->
+<serviceGroup>
+<service name="springInit" class="edu.itq.soa.validarhab.SpringInit">
+    	<description>Este servicio inicializa el contexto de Spring</description>
+    	<parameter name="serviceTCCL">composite</parameter>
+        <parameter name="ServiceClass">edu.itq.soa.validarhab.SpringInit</parameter>
+        <parameter name="load-on-startup">true</parameter>
+        <operation name="springInit">
+        	<messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/> 
+        </operation>
+    </service>
+     <service name="ValidarHabitacionService">
+        <messageReceivers>
+            <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="com.akk.validarhabitacion.ValidarHabitacionServiceMessageReceiverInOut"/>
+        </messageReceivers>
+        <parameter name="ServiceClass">com.akk.validarhabitacion.ValidarHabitacionServiceImpl</parameter>
+         <parameter name="ServiceObjectSupplier">
+    	org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier</parameter>
+        <parameter name="SpringBeanName">validarHabitacionServiceImpl</parameter>
+		<parameter name="SpringContextLocation">applicationContext.xml</parameter>
+        <parameter name="useOriginalwsdl">true</parameter>
+        <parameter name="modifyUserWSDLPortAddress">true</parameter>
+        <operation name="ValidarHabitacionOperation" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://itq.edu/soa/validarhab">
+            <actionMapping>http://itq.edu/soa/validarhab/verificar</actionMapping>
+            <outputActionMapping>http://itq.edu/soa/validarhab/ValidarHabitacionPortType/ValidarHabitacionOperationResponse</outputActionMapping>
+        </operation>
+    </service>
+</serviceGroup>
